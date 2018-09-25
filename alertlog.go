@@ -79,6 +79,15 @@ func (e *Exporter) SetLastScrapeTime(conf int, t time.Time) {
 	}
 }
 
+func isTypeIgnored(conf int, alertConf int, errType string) bool {
+	for _, ignoreType := range config.Cfgs[conf].Alertlog[alertConf].IgnoreType {
+		if ignoreType == errType {
+			return true
+		}
+	}
+	return false
+}
+
 func isIgnored(conf int, alertConf int, err string) bool {
 	for _, e := range config.Cfgs[conf].Alertlog[alertConf].Ignore {
 		if e == err {
@@ -105,6 +114,7 @@ func addError(oerr string) {
 
 func (e *Exporter) ScrapeAlertlog() {
 	loc := time.Now().Location()
+	reType := regexp.MustCompile(`(INFO|WARN|ERROR)`)
 	re := regexp.MustCompile(`O(RA|GG)-[0-9]+`)
 	oggTimeRe := regexp.MustCompile(`^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+(.*)$`)
 
@@ -132,8 +142,9 @@ func (e *Exporter) ScrapeAlertlog() {
 								lastTime = t
 								if lastTime.After(lastScrapeTime) {
 									if re.MatchString(scanner.Text()) {
+										errType := reType.FindString(scanner.Text())
 										oerr := re.FindString(scanner.Text())
-										if !isIgnored(conf, alertConfig, oerr) {
+										if !isIgnored(conf, alertConfig, oerr) && !isTypeIgnored(conf, alertConfig, errType) {
 											addError(oerr)
 										}
 									}
@@ -149,8 +160,9 @@ func (e *Exporter) ScrapeAlertlog() {
 						} else {
 							if lastTime.After(lastScrapeTime) {
 								if re.MatchString(scanner.Text()) {
+									errType := reType.FindString(scanner.Text())
 									oerr := re.FindString(scanner.Text())
-									if !isIgnored(conf, alertConfig, oerr) {
+									if !isIgnored(conf, alertConfig, oerr) && !isTypeIgnored(conf, alertConfig, errType) {
 										addError(oerr)
 									}
 								}

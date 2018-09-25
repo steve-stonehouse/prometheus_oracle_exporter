@@ -16,6 +16,8 @@ connections:
         - ORA-3136
     - file: /u01/app/oracle/product/12.1.0/gg_12201/ggserr.log
       ogg: true
+      ignoretype:
+        - INFO
       ignore:
         - OGG-123
         - OGG-456

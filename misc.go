@@ -15,7 +15,8 @@ import (
 
 type Alert struct {
 	File   string   `yaml:"file"`
-	Ignore []string `yaml:"Ignore"`
+	IgnoreType []string `yaml:"ignoretype"`
+	Ignore []string `yaml:"ignore"`
 	Ogg    bool     `yaml:"ogg"`
 }
 
