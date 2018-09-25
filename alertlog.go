@@ -171,7 +171,6 @@ func (e *Exporter) ScrapeAlertlog() {
 					}
 				}
 				file.Close()
-				e.SetLastScrapeTime(conf, lastTime)
 				for i, _ := range Errors {
 					e.alertlog.WithLabelValues(
 						config.Cfgs[conf].Database,
@@ -185,6 +184,7 @@ func (e *Exporter) ScrapeAlertlog() {
 					config.Cfgs[conf].Instance).Set(float64(info.ModTime().Unix()))
 			}
 		}
+	  e.SetLastScrapeTime(conf, lastTime)
 	}
 	WriteAccess()
 }
