@@ -114,7 +114,7 @@ func addError(oerr string) {
 
 func (e *Exporter) ScrapeAlertlog() {
 	loc := time.Now().Location()
-	reType := regexp.MustCompile(`(INFO|WARN|ERROR)`)
+	reType := regexp.MustCompile(`(INFO|WARNING|ERROR)`)
 	re := regexp.MustCompile(`O(RA|GG)-[0-9]+`)
 	oggTimeRe := regexp.MustCompile(`^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+(.*)$`)
 
@@ -184,7 +184,7 @@ func (e *Exporter) ScrapeAlertlog() {
 					config.Cfgs[conf].Instance).Set(float64(info.ModTime().Unix()))
 			}
 		}
-	  e.SetLastScrapeTime(conf, lastTime)
+		e.SetLastScrapeTime(conf, lastTime)
 	}
 	WriteAccess()
 }
